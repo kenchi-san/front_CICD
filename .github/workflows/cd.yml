@@ -20,10 +20,10 @@ jobs:
 
       - name: Build and push front Docker image
         run: |
-          docker build -t moncompte/monapp-front:latest -f Dockerfile.front .
+          docker build -t moncompte/monapp-front:latest -f ./Dockerfile.front .
           docker push moncompte/monapp-front:latest
 
       - name: Build and push back Docker image
         run: |
-          docker build -t moncompte/monapp-back:latest -f Dockerfile.back .
+          docker build -t moncompte/monapp-back:latest -f ./Dockerfile.back .
           docker push moncompte/monapp-back:latest
