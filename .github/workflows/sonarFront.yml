@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Run Angular tests with coverage
         run: |
-          cd front
+          cd front_CICD
           npm ci
           npx ng test --code-coverage --watch=false
       - name: SonarQube Scan
@@ -24,4 +24,4 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.javascript.lcov.reportPaths=front/coverage/bobapp/app/services/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=front_CICD/coverage/bobapp/app/services/lcov.info
