@@ -1,79 +1,27 @@
-name: CI - Frontend Tests & SonarCloud
-
+name: Build
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
   pull_request:
-    branches: ["main"]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pull-requests: write
-
+    types: [opened, synchronize, reopened]
 jobs:
-  frontend-tests:
-    name: Frontend - Tests & Coverage
+  sonarqube:
+    name: SonarQube
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
         with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm ci
-        working-directory: front
-
-      - name: Run frontend tests with coverage
-        run: npm run test -- --watch=false --browsers=ChromeHeadless --code-coverage
-        working-directory: front
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: angular-coverage
-          path: front/coverage/**/lcov.info
-
-  sonar-analysis:
-    name: Frontend - SonarCloud Analysis
-    needs: frontend-tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download coverage report
-        uses: actions/download-artifact@v4
-        with:
-          name: angular-coverage
-          path: front/coverage
-
-      - name: SonarCloud analysis
-        uses: SonarSource/sonarcloud-github-action@v2
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Run Angular tests with coverage
+        run: |
+          cd front
+          npm ci
+          npx ng test --code-coverage --watch=false
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONT }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          projectBaseDir: front
           args: >
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY_FRONT }}
-            -Dsonar.organization=${{ secrets.SONAR_ORG }}
-            -Dsonar.sources=src/app
-            -Dsonar.tests=src
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.exclusions=**/*.spec.ts
-            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', github.event.pull_request.number, github.head_ref, github.base_ref) || '' }}
-
-  quality-gate:
-    name: Frontend - Wait for Quality Gate
-    needs: sonar-analysis
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wait for SonarCloud Quality Gate
-        uses: SonarSource/sonarcloud-quality-gate-action@master
-        with:
-          projectKey: ${{ secrets.SONAR_PROJECT_KEY_FRONT }}
-          sonarToken: ${{ secrets.SONAR_TOKEN_FRONT }}
+            -Dsonar.javascript.lcov.reportPaths=front/coverage/bobapp/app/services/lcov.info
