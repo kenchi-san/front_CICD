@@ -23,5 +23,5 @@ jobs:
 
       - name: Build and push front Docker image
         run: |
-          docker build -t tonutilisateur/monapp-front:latest -f ./Dockerfile .
-          docker push tonutilisateur/monapp-front:latest
+          docker build -t kenchisan/monapp-front:v1.0 -f ./Dockerfile .
+          docker push kenchisan/monapp-front:v1.0
