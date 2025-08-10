@@ -21,10 +21,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies and run tests with coverage
+      - name: Install dependencies and run tests with coverage (ChromeHeadless)
         run: |
           npm ci
-          npx ng test --code-coverage --watch=false
+          npx ng test --browsers=ChromeHeadless --code-coverage --watch=false
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
