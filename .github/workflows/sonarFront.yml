@@ -34,7 +34,7 @@ jobs:
           args: >
             -Dsonar.projectKey=kenchi-san_front_CICD
             -Dsonar.organization=kenchi-san-back
-            -Dsonar.sources=src/app
+            -Dsonar.sources=src
             -Dsonar.test.inclusions=**/*.spec.ts
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.exclusions=**/*.spec.ts
