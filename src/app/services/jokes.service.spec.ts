@@ -1,10 +1,52 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { JokesService } from './jokes.service';
+import { Joke } from '../model/joke.model';
 
-import { of } from 'rxjs';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import {Joke} from "../model/joke.model";
-import {AppComponent} from "../app.component";
-import {JokesService} from "./jokes.service";
+describe('JokesService', () => {
+  let service: JokesService;
+  let httpMock: HttpTestingController;
+
+  const mockJoke: Joke = {
+    joke: 'Pourquoi les devs utilisent des claviers mécaniques ?',
+    response: 'Pour taper fort sur les bugs.'
+  };
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [JokesService]
+    });
+    httpMock = TestBed.inject(HttpTestingController);
+    service = TestBed.inject(JokesService);
+    // Ignore la requête automatique
+    httpMock.expectOne('api/joke').flush(mockJoke); // "consume" l'appel déclenché par le constructeur
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+
+  it('should fetch a random joke and update the subject', (done) => {
+    // Appelle manuellement la méthode pour tester
+    service.getRandomJoke();
+
+    const req = httpMock.expectOne('api/joke');
+    expect(req.request.method).toBe('GET');
+
+    req.flush(mockJoke);
+
+    service.joke$().subscribe(joke => {
+      expect(joke).toEqual(mockJoke);
+      done(); // ✅ évite les erreurs async
+    });
+  });
+});
+
 
 
 // import { TestBed } from '@angular/core/testing';
@@ -28,45 +70,3 @@ import {JokesService} from "./jokes.service";
 //   });
 //
 // });
-
-
-describe('AppComponent', () => {
-  let component: AppComponent;
-  let fixture: ComponentFixture<AppComponent>;
-  let jokeServiceSpy: jasmine.SpyObj<JokesService>;
-
-  const mockJoke: Joke = {
-    joke: 'Pourquoi les devs n’aiment pas la lumière ?',
-    response: 'Parce qu’ils préfèrent les bugs !'
-  };
-
-  beforeEach(async () => {
-    const spy = jasmine.createSpyObj('JokesService', ['joke$', 'getRandomJoke']);
-
-    await TestBed.configureTestingModule({
-      declarations: [AppComponent],
-      providers: [{ provide: JokesService, useValue: spy }],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA] // ignore Angular Material tags
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(AppComponent);
-    component = fixture.componentInstance;
-
-    jokeServiceSpy = TestBed.inject(JokesService) as jasmine.SpyObj<JokesService>;
-    jokeServiceSpy.joke$.and.returnValue(of(mockJoke));
-  });
-
-  it('should create the app', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should get a joke on init', () => {
-    component.ngOnInit();
-    expect(jokeServiceSpy.getRandomJoke).toHaveBeenCalled();
-  });
-
-  it('should call getRandomJoke when button clicked', () => {
-    component.getRandomJoke();
-    expect(jokeServiceSpy.getRandomJoke).toHaveBeenCalled();
-  });
-});
