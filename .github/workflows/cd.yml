@@ -1,0 +1,29 @@
+name: Build and Deploy Docker images
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push front Docker image
+        run: |
+          docker build -t moncompte/monapp-front:latest -f Dockerfile.front .
+          docker push moncompte/monapp-front:latest
+
+      - name: Build and push back Docker image
+        run: |
+          docker build -t moncompte/monapp-back:latest -f Dockerfile.back .
+          docker push moncompte/monapp-back:latest
