@@ -17,11 +17,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Check Dockerfile.front presence
-        run: ls -l Dockerfile.front
+      - name: Check Dockerfile presence
+        run: ls -l Dockerfile
 
       - name: Build and push front Docker image
         run: |
-          # Construire l'image front en utilisant Dockerfile.front à la racine
-          docker build -t moncompte/monapp-front:latest -f ./Dockerfile.front .
+          # Construire l'image front en utilisant Dockerfile à la racine
+          docker build -t moncompte/monapp-front:latest -f ./Dockerfile .
           docker push moncompte/monapp-front:latest
