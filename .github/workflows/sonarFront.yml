@@ -25,6 +25,8 @@ jobs:
         run: |
           npm ci
           npx ng test --browsers=ChromeHeadless --code-coverage --watch=false
+      - name: Afficher lcov.info
+        run: cat coverage/lcov.info
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
