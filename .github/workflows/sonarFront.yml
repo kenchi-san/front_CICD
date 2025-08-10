@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies and run tests with coverage
         run: |
           npm ci
-          npx ng test --code-coverage --watch=false
+          npm run test -- --code-coverage
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
