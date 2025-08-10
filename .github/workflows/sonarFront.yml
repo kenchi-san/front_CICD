@@ -23,7 +23,15 @@ jobs:
 
       - name: Install dependencies and run tests with coverage
         run: |
-          npm ci
+          if [ -d "front" ]; then
+            cd front
+          elif [ -d "front_CICD" ]; then
+            cd front_CICD
+          else
+            echo "No frontend directory found"
+            exit 1
+          fi
+          npm ci          npm ci
           npm run test -- --code-coverage
 
       - name: SonarQube Scan
