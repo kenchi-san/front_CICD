@@ -26,7 +26,7 @@ jobs:
         run: |
           cd front
           npm ci
-          npm run test -- --code-coverage
+          npm run test -- --code-coverage --watch=false
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
