@@ -15,26 +15,26 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-#
-#      - name: Use Node.js 20
-#        uses: actions/setup-node@v4
-#        with:
-#          node-version: '20'
-#      - name: Install dependencies and run tests with coverage
-#        run: |
-#          cd front
-#          npm ci
-#          npm run test -- --code-coverage --watch=false
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies and run tests with coverage
+        run: |
+          npm ci
+          npx ng test --code-coverage --watch=false
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#        with:
-#          args: >
-#            -Dsonar.projectKey=kenchi-san_front_CICD
-#            -Dsonar.organization=kenchi-san-back
-#            -Dsonar.sources=front/src/app
-#            -Dsonar.tests=front/src
-#            -Dsonar.javascript.lcov.reportPaths=front/coverage/lcov.info
-#            -Dsonar.exclusions=**/*.spec.ts
+        with:
+          args: >
+            -Dsonar.projectKey=kenchi-san_front_CICD
+            -Dsonar.organization=kenchi-san-back
+            -Dsonar.sources=src/app
+            -Dsonar.tests=src
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.exclusions=**/*.spec.ts
