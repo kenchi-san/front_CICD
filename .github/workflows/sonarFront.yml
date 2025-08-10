@@ -23,7 +23,6 @@ jobs:
 
       - name: Install dependencies and run tests with coverage
         run: |
-          cd front
           npm ci
           npx ng test --code-coverage --watch=false
 
