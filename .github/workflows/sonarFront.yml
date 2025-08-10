@@ -25,8 +25,11 @@ jobs:
         run: |
           npm ci
           npx ng test --browsers=ChromeHeadless --code-coverage --watch=false
-      - name: Afficher lcov.info
-        run: cat coverage/lcov.info
+          ls -l coverage/
+          ls -l coverage/bobapp/
+
+      - name: Afficher le contenu du fichier lcov.info
+        run: cat coverage/bobapp/lcov.info
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
@@ -38,5 +41,5 @@ jobs:
             -Dsonar.organization=kenchi-san-back
             -Dsonar.sources=src
             -Dsonar.test.inclusions=**/*.spec.ts
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
             -Dsonar.exclusions=**/*.spec.ts
