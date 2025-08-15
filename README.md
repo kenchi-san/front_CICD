@@ -29,26 +29,22 @@ cd ..
 Créer docker-compose.yml à placer à la racine du projet BobApp :
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   backend:
-    build: ./back
-    container_name: bobapp-back
+    build:
+      context: ./back
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-    depends_on:
-      - frontend
 
   frontend:
-    build: ./front
-    container_name: bobapp-front
+    build:
+      context: ./front
+      dockerfile: Dockerfile
     ports:
-      - "4200:4200"
-    environment:
-      - NODE_ENV=development
+      - "3000:80"
 ```
 4️⃣ Lancer l’application avec Docker Compose
 
