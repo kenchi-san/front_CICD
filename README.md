@@ -1,27 +1,103 @@
-# Bobapp
+# BobApp
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.0.
+## 1️⃣ Cloner le projet
 
-## Development server
+```bash
+# Crée le dossier principal
+mkdir BobApp
+cd BobApp
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+# Clone le backend et le frontend
+git clone https://github.com/kenchi-san/back_CICD.git back
+git clone https://github.com/kenchi-san/front_CICD.git front
+```
+2️⃣ Installer les dépendances
+Frontend (Angular)
 
-## Code scaffolding
+```bash
+cd front
+npm install
+cd ..
+```
+```bash
+cd back
+mvn clean install
+cd ..
+```
+3️⃣ Dockerisation
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Créer docker-compose.yml à placer à la racine du projet BobApp :
 
-## Build
+```yaml
+version: '3.8'
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+services:
+  backend:
+    build: ./back
+    container_name: bobapp-back
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - frontend
 
-## Running unit tests
+  frontend:
+    build: ./front
+    container_name: bobapp-front
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=development
+```
+4️⃣ Lancer l’application avec Docker Compose
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```bash
+docker-compose up --build
+```
+* --build : reconstruit les images si nécessaire
 
-## Running end-to-end tests
+*  Les logs du backend et frontend s’affichent dans le terminal.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Pour arrêter les conteneurs :
+```bash
+docker-compose down
+```
+5️⃣ Vérifications
 
-## Further help
+Backend accessible sur : http://localhost:8080
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Frontend accessible sur : http://localhost:3000
+
+Architecture:
+
+```
+├───back
+│   ├───.github
+│   │   └───workflows
+│   ├───src
+│   └──├───main
+│      │   ├───java
+│      │   │   └───com
+│      │   │       └───openclassrooms
+│      │   │           └───bobapp
+│      │   │               ├───controller
+│      │   │               ├───data
+│      │   │               ├───model
+│      │   │               └───service
+│      │   └───resources
+│      │       └───json
+│      └───test
+│   
+├───front
+│    ├───.github
+│    │   └───workflows
+│    └───src
+│    ├───app
+│    │   ├───model
+│    │   └───services
+│    ├───assets
+│    └───environments
+│
+└──docker-compose.yml
+```
